@@ -40,6 +40,6 @@ jobs:
             - name: Upload Boot Image
               uses: actions/upload-artifact@v2
               with:
-                  name: boot
-                  path: boot.zip    
+                  name: ${{ github.event.inputs.ota-version }}_boot
+                  path: boot.zip   
                   
