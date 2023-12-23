@@ -1,0 +1,45 @@
+name: Fetch download link
+
+on:
+    workflow_dispatch:
+        inputs:
+            filename:
+                description: 'Name of the file to download'
+                required: true
+                type: string
+            ota-date:
+                description: 'OTA month (MM)'
+                required: true
+                type: number
+            ota-version:
+                description: 'OTA version (e.g. OOS13.1.0.0)'
+                required: true
+                type: string
+
+jobs:
+    fetch_ota:
+        runs-on: ubuntu-latest
+        outputs:
+          id: ota-link
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@main
+            
+            - name: Set up Environment
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y python3 python3-pip python-is-python3 axel neofetch jq
+                python fetch.py ${{ github.event.inputs.filename }} ${{ github.event.inputs.ota-date }} ${{ github.event.inputs.ota-version }}
+                wget https://github.com/ssut/payload-dumper-go/releases/download/1.2.2/payload-dumper-go_1.2.2_linux_amd64.tar.gz && tar -xvzf payload-dumper-go_1.2.2_linux_amd64.tar.gz
+                wget $(cat *.json | jq -r '.Link')
+                ./payload-dumper-go ${{ github.event.inputs.filename }} > /dev/null
+                cp extracted*/boot.img $(pwd)
+                zip -r boot.zip boot.img ${{ github.event.inputs.ota-version }}.json
+
+                
+            - name: Upload Boot Image
+              uses: actions/upload-artifact@v2
+              with:
+                  name: boot
+                  path: boot.zip    
+                  

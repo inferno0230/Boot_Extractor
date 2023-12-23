@@ -27,7 +27,7 @@ def download(url, filename, month, otaName):
             data["Content-Type"] = r.headers.get("Content-Type")
             data["server"] = r.headers.get("server")
             data["Link"] = current_url
-            #Dump data into meradata.json with data in seperate lines
+            # Dump data into metadata.json with data in seperate lines
             with open(otaName+".json", "w") as f:
                 json.dump(data, f, indent=4)
             
