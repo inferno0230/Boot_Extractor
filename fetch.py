@@ -14,7 +14,7 @@ def download(url, filename, month, otaName):
     
     for date in dates:
         currect_date = date
-        current_url = url+"23/"+month+"/"+date+"/"+filename
+        current_url = url+"24/"+month+"/"+date+"/"+filename
         #print(current_url)
         ## curl current url and check if it gets zip file
         r = requests.request("HEAD", current_url)
